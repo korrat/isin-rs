@@ -1,16 +1,24 @@
 use isin::ISIN;
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Stock {
+    isin: ISIN,
+    name: String,
+}
 
 fn main() {
     let isin: ISIN = "US0378331005".parse().unwrap();
+    let order = Stock {
+        isin,
+        name: "Apple Inc".into(),
+    };
 
-    let serialized = serde_json::to_string(&isin).unwrap();
-    println!("Serialized ISIN: {}", serialized);
+    let serialized = serde_json::to_string(&order).unwrap();
+    println!("Serialized object: {:?}", serialized);
 
-    let deserialized: ISIN = serde_json::from_str(&serialized).unwrap();
+    let deserialized: Stock = serde_json::from_str(&serialized).unwrap();
 
-    println!("Deserialized ISIN: {}", deserialized); // "US0378331005"
-    println!("  Prefix: {}", deserialized.prefix()); // "US"
-    println!("  Basic code: {}", deserialized.basic_code()); // "037833100"
-    println!("  Check digit: {}", deserialized.check_digit()); // '5'
-    assert_eq!(isin, deserialized);
+    println!("Deserialized object: {:?}", deserialized);
 }
